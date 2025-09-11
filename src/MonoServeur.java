@@ -3,10 +3,16 @@ import java.io.*;
 import java.net.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
-
+import java.util.Scanner;
+import java.net.InetAddress;
 public class MonoServeur {
 
     public static void main(String[] args) throws IOException {
+    //AFFICHER IP ET CHOIX
+//        System.out.println(Outils.getSystemIP());
+//        Scanner sc = new Scanner(System.in);
+//        System.out.print("Entre l'ip :");
+        String ip = "10.0.0.108";  //sc.nextLine();
 
         final int port=4000;
         boolean deconnexionClientDemandee = false ;
@@ -14,8 +20,8 @@ public class MonoServeur {
         String messageRecu = null;
         String reponse = null;
         //créer une instance de la classe SocketServer en précisant le port en paramètre
-        ServerSocket monServerDeSocket = new ServerSocket(port);
-        System.out.println("Serveur en fonctionnement.");
+
+        ServerSocket monServerDeSocket = new ServerSocket(4000,1,InetAddress.getByName(ip)); // socket d'ecoute
 
         //définir une boucle sans fin contenant les actions ci-dessous
         while (true) {
@@ -42,6 +48,7 @@ public class MonoServeur {
                 //TRAITEMENT
                 System.out.println("\t\t Traitement Requete ... ");
                 messageRecu = messageRecu.trim();
+                String messageRecuEcho = messageRecu.substring(0,4);
                 switch (messageRecu){
                     case "exit":
                         reponse = "JE VOUS DECONNECTE !!!";
@@ -53,6 +60,15 @@ public class MonoServeur {
                         break;
                     case "time":
                         reponse = "On est le :" + String.valueOf(LocalDate.now()) + " et il est "+String.valueOf(LocalTime.now());
+                        break;
+                    case "me":
+                        reponse = "votre port est " + socketDuClient.getInetAddress() + ":" + socketDuClient.getPort();
+                        break;
+                    case "you":
+                        reponse = "mon port est " + monServerDeSocket.getInetAddress() + ":" + monServerDeSocket.getLocalPort();
+                }
+                if(messageRecuEcho.equalsIgnoreCase("echo")){
+                    reponse = messageRecu.substring(5, messageRecu.length());
                 }
                 fluxSortie.println(reponse);
                 System.out.println("\t\t Message emis : "+reponse);
