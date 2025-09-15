@@ -1,4 +1,3 @@
-
 import java.io.*;
 import java.net.*;
 import java.time.LocalDate;
@@ -9,9 +8,9 @@ public class MonoServeur {
 
     public static void main(String[] args) throws IOException {
     //AFFICHER IP ET CHOIX
-//        System.out.println(Outils.getSystemIP());
-//        Scanner sc = new Scanner(System.in);
-//        System.out.print("Entre l'ip :");
+        System.out.println(Outils.getSystemIP());
+        Scanner sc = new Scanner(System.in);
+        System.out.print("Entre l'ip :");
         String ip = "10.0.0.108";  //sc.nextLine();
 
         final int port=4000;
@@ -44,13 +43,15 @@ public class MonoServeur {
                 {
                     System.out.println("\t\t Message reçu : " + messageRecu );
                 }
-
                 //TRAITEMENT
                 System.out.println("\t\t Traitement Requete ... ");
-                messageRecu = messageRecu.trim();
-                String messageRecuEcho = messageRecu.substring(0,4);
+                messageRecu = messageRecu.toLowerCase().trim();
+                String messageRecuEcho = "";
+                if (messageRecu.length() >=4) {
+                    messageRecuEcho = messageRecu.substring(0,4);
+                }
                 switch (messageRecu){
-                    case "exit":
+                    case "fin":
                         reponse = "JE VOUS DECONNECTE !!!";
                         deconnexionClientDemandee = true;
                         break;
@@ -62,10 +63,15 @@ public class MonoServeur {
                         reponse = "On est le :" + String.valueOf(LocalDate.now()) + " et il est "+String.valueOf(LocalTime.now());
                         break;
                     case "me":
-                        reponse = "votre port est " + socketDuClient.getInetAddress() + ":" + socketDuClient.getPort();
+                    case "whoami?":
+                        reponse = "votre " + socketDuClient.getInetAddress().getHostAddress() + ":" + socketDuClient.getPort();
                         break;
                     case "you":
                         reponse = "mon port est " + monServerDeSocket.getInetAddress() + ":" + monServerDeSocket.getLocalPort();
+                        break;
+                    case "WHOAREYOU?":
+                        reponse = "mon port est " + monServerDeSocket.getInetAddress() + ":" + monServerDeSocket.getLocalPort();
+                        break;
                 }
                 if(messageRecuEcho.equalsIgnoreCase("echo")){
                     reponse = messageRecu.substring(5, messageRecu.length());
